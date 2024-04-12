@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://database-1.cnog4qiu44p8.ap-northeast-2.rds.amazonaws.com:3306/swingsDB?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: admin
+    password: Winorwow2*!
+  thymeleaf:
+    cache: false
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    open-in-view: false
+    show-sql: true
+    hibernate:
+      ddl-auto: update

@@ -22,7 +22,7 @@ public class User {
     @Column(name = "password") // 데이터베이스 컬럼명에 맞게 수정
     private String password;
 
-    @Column(name = "nickname") // 데이터베이스 컬럼명에 맞게 수정
+    @Column(unique = true, name = "nickname") // 데이터베이스 컬럼명에 맞게 수정
     private String nickname;
 
     public static User toUser(UserDTO userDTO) {

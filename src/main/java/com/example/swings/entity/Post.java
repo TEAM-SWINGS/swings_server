@@ -18,10 +18,11 @@ import java.time.LocalDateTime;
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long postID;
+    private Long id;
 
-    @Column(name = "userID")
-    private Long userID;
+    @ManyToOne
+    @JoinColumn(name = "userid")
+    private User user;
 
     @Column(name = "teamfield") // 데이터베이스 컬럼명에 맞게 수정
     private String teamfield;
@@ -40,7 +41,7 @@ public class Post {
 
     public static Post toPost(PostDTO postDTO) {
         Post post = new Post();
-        post.setUserID(postDTO.getUserID());
+//        post.setUser(postDTO.getUser());
         post.setTeamfield(postDTO.getTeamfield());
         post.setTitle(postDTO.getTitle());
         post.setContent(postDTO.getContent());

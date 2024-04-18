@@ -24,10 +24,15 @@ public class PostService {
     @Autowired
     private final PostRepository postRepository;
 
+    @Autowired
+    private final UserRepository userRepository;
+
     public void savePost(PostDTO postDTO) {
         Post post = Post.toPost(postDTO);
         post.setViews(0);
-//        post.setCreatedate();
+        post.setCreatedate(LocalDateTime.now());
+        User user = userRepository.findByEmail(postDTO.getEmail()).orElseThrow();
+        post.setUser(user);
         postRepository.save(post);
     }
 
@@ -37,13 +42,12 @@ public class PostService {
         return PostDTO.fromPost(post);
     }
 
-    public Long findUserIdByPostId(Long postId){
-        Post post = postRepository.findById(postId).orElse(null);
-        if (post != null) {
-            return post.getUserID();
-        }
-        return null;
+    public List<PostDTO> getPostsByTeam(String team) {
+        return postRepository.findByTeamfield(team).stream()
+                .map(PostDTO::fromPost)
+                .collect(Collectors.toList());
     }
+
 
     public List<PostDTO> getAllPosts() {
         return postRepository.findAllByOrderByCreatedateDesc().stream()
@@ -52,4 +56,10 @@ public class PostService {
     }
 
 
+    public void increaseViews(PostDTO postDTO) {
+        Post post = postRepository.findById(postDTO.getId()).orElseThrow();
+        int views = post.getViews() + 1;
+        post.setViews(views);
+        postRepository.save(post);
+    }
 }

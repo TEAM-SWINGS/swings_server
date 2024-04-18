@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class PostController {
@@ -28,15 +29,27 @@ public class PostController {
         }
     }
 
-    @GetMapping("/api/posts") // GET 요청을 처리하는 엔드포인트 추가
-    public List<PostDTO> getAllPosts() {
-        return postService.getAllPosts();
+    @GetMapping("/api/posts")
+    public ResponseEntity<List<PostDTO>> getAllPosts() {
+        List<PostDTO> posts = postService.getAllPosts();
+        return ResponseEntity.ok(posts);
     }
 
-    @GetMapping("/api/post/{id}")
-    public PostDTO getPost(@PathVariable Long id) {
-        return postService.getPostById(id);
+    @PutMapping("/api/posts/views") // GET 요청을 처리하는 엔드포인트 추가
+    public void addViews(PostDTO postDTO) {
+        postService.increaseViews(postDTO);
     }
+
+    @GetMapping("/api/posts/{team}")
+    public ResponseEntity<List<PostDTO>> getPostsByTeam(@PathVariable String team) {
+        List<PostDTO> filteredPosts = postService.getPostsByTeam(team);
+        return ResponseEntity.ok(filteredPosts);
+    }
+
+
+
+
+
 
 
 

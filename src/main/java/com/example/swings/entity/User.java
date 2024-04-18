@@ -14,7 +14,7 @@ import lombok.Setter;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userID;
+    private Long id;
 
     @Column(unique = true, name = "email") // 데이터베이스 컬럼명에 맞게 수정
     private String email;

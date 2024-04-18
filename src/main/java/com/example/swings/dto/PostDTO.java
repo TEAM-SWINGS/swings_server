@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostDTO {
-    private Long UserID;
+    private Long userID;
     private String teamfield; // 데이터베이스 컬럼명에 맞게 수정
     private String title; // 데이터베이스 컬럼명에 맞게 수정
     private String content; // 데이터베이스 컬럼명에 맞게 수정

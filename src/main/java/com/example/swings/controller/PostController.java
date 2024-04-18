@@ -1,6 +1,7 @@
 package com.example.swings.controller;
 
 import com.example.swings.dto.PostDTO;
+import com.example.swings.entity.Post;
 import com.example.swings.service.PostService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,14 +29,15 @@ public class PostController {
     }
 
     @GetMapping("/api/posts") // GET 요청을 처리하는 엔드포인트 추가
-    public ResponseEntity<?> getAllPosts() {
-        try {
-            List<PostDTO> posts = postService.getAllPosts(); // 모든 게시글을 가져옴
-            return ResponseEntity.ok(posts); // 게시글 리스트를 응답으로 반환
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
+    public List<PostDTO> getAllPosts() {
+        return postService.getAllPosts();
     }
+
+    @GetMapping("/api/post/{id}")
+    public PostDTO getPost(@PathVariable Long id) {
+        return postService.getPostById(id);
+    }
+
 
 
 }

@@ -9,8 +9,11 @@ import com.example.swings.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,8 +26,8 @@ public class PostService {
 
     public void savePost(PostDTO postDTO) {
         Post post = Post.toPost(postDTO);
-        post.setViews(0); // 새로운 글이므로 조회수는 0으로 초기화
-        post.setCreatedate(LocalDateTime.now()); // 현재 시간으로 생성일 설정
+        post.setViews(0);
+//        post.setCreatedate();
         postRepository.save(post);
     }
 
@@ -42,13 +45,11 @@ public class PostService {
         return null;
     }
 
-
     public List<PostDTO> getAllPosts() {
-        List<Post> posts = postRepository.findAll(); // 모든 게시글을 가져옴
-        // Post 엔티티를 PostDTO로 변환하여 리스트로 반환
-        return posts.stream()
+        return postRepository.findAllByOrderByCreatedateDesc().stream()
                 .map(PostDTO::fromPost)
                 .collect(Collectors.toList());
     }
+
 
 }

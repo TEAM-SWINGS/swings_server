@@ -8,6 +8,10 @@ import com.example.swings.repository.PostRepository;
 import com.example.swings.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +19,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service //스프링이 관리해주는 객체 == 스프링 빈
@@ -36,11 +41,12 @@ public class PostService {
         postRepository.save(post);
     }
 
-    public PostDTO getPostById(Long postId) {
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("Post not found with id: " + postId));
+    public PostDTO getPostById(Long id) { // 여기서도 postId가 아니라 id로 변경
+        Post post = postRepository.findById(id) // 여기서도 postId가 아니라 id로 변경
+                .orElseThrow(() -> new NoSuchElementException("Post not found with id: " + id)); // 여기서도 postId가 아니라 id로 변경
         return PostDTO.fromPost(post);
     }
+
 
     public List<PostDTO> getPostsByTeam(String team) {
         return postRepository.findByTeamfield(team).stream()
@@ -49,13 +55,13 @@ public class PostService {
     }
 
 
-    public List<PostDTO> getAllPosts() {
-        return postRepository.findAllByOrderByCreatedateDesc().stream()
+    public Page<PostDTO> getAllPosts(Pageable pageable) {
+        Page<Post> postPage = postRepository.findAllByOrderByCreatedateDesc(pageable);
+        List<PostDTO> postDTOList = postPage.getContent().stream()
                 .map(PostDTO::fromPost)
                 .collect(Collectors.toList());
+        return new PageImpl<>(postDTOList, pageable, postPage.getTotalElements());
     }
-
-
     public void increaseViews(PostDTO postDTO) {
         Post post = postRepository.findById(postDTO.getId()).orElseThrow();
         int views = post.getViews() + 1;

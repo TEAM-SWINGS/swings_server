@@ -50,10 +50,12 @@ public class PostService {
     }
 
 
-    public List<PostDTO> getPostsByTeam(String team) {
-        return postRepository.findByTeamfield(team).stream()
+    public Page<PostDTO> getPostsByTeam(String team, Pageable pageable) {
+        Page<Post> postPage = postRepository.findByTeamfield(team, pageable);
+        List<PostDTO> postDTOList = postPage.getContent().stream()
                 .map(PostDTO::fromPost)
                 .collect(Collectors.toList());
+        return new PageImpl<>(postDTOList, pageable, postPage.getTotalElements());
     }
 
 

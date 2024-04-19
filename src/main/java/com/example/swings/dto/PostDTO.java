@@ -24,6 +24,9 @@ public class PostDTO {
     private Integer views; // 데이터베이스 컬럼명에 맞게 수정
     private LocalDateTime createdate; // 데이터베이스 컬럼명에 맞게 수정
 
+    private int pageNumber;
+    private int pageSize;
+
     public static PostDTO fromPost(Post post) {
         PostDTO postDTO = new PostDTO();
         postDTO.setId(post.getId());

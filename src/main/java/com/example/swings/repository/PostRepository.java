@@ -19,6 +19,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     //Optional<User> findByEmail(String email);
     @Query("SELECT p FROM Post p WHERE p.teamfield = :teamfield")
-    List<Post> findByTeamfield(@Param("teamfield") String teamfield);
+    Page<Post> findByTeamfield(@Param("teamfield") String teamfield, Pageable pageable);
 
 }

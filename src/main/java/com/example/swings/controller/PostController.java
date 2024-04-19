@@ -37,14 +37,31 @@ public class PostController {
     }
 
 
-    @GetMapping("/api/posts")
-    public ResponseEntity<Page<PostDTO>> getAllPosts(@RequestParam(defaultValue = "0") int page,
-                                                     @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<PostDTO> postPage = postService.getAllPosts(pageable);
+//    @GetMapping("/api/posts")
+//    public ResponseEntity<Page<PostDTO>> getAllPosts(@RequestParam(defaultValue = "0") int page,
+//                                                     @RequestParam(defaultValue = "10") int size) {
+//        Pageable pageable = PageRequest.of(page, size);
+//        Page<PostDTO> postPage = postService.getAllPosts(pageable);
+//
+//        return ResponseEntity.ok(postPage);
+//    }
 
-        return ResponseEntity.ok(postPage);
+    @GetMapping("/api/posts")
+    public ResponseEntity<Page<PostDTO>> getPosts(@RequestParam(required = false) String team,
+                                                  @RequestParam(required = false) String sort,
+                                                  @RequestParam(required = false) String search,
+                                                  @RequestParam(defaultValue = "0") int page,
+                                                  @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<PostDTO> postsPage;
+        if (team != null) {
+            postsPage = postService.getPostsByTeam(team, pageable);
+        } else {
+            postsPage = postService.getAllPosts(pageable);
+        }
+        return ResponseEntity.ok(postsPage);
     }
+
 
     @PutMapping("/api/posts/views")
     public ResponseEntity<String> addViews(@RequestParam Long id) {
@@ -56,11 +73,11 @@ public class PostController {
         }
     }
 
-    @GetMapping("/api/posts/{team}")
-    public ResponseEntity<List<PostDTO>> getPostsByTeam(@PathVariable String team) {
-        List<PostDTO> filteredPosts = postService.getPostsByTeam(team);
-        return ResponseEntity.ok(filteredPosts);
-    }
+//    @GetMapping("/api/posts/{team}")
+//    public ResponseEntity<List<PostDTO>> getPostsByTeam(@PathVariable String team) {
+//        List<PostDTO> filteredPosts = postService.getPostsByTeam(team);
+//        return ResponseEntity.ok(filteredPosts);
+//    }
 
     @GetMapping("/postpage/{id}")
     public ResponseEntity<PostDTO> getPostById(@PathVariable Long id) {

@@ -1,5 +1,6 @@
 package com.example.swings.controller;
 
+import org.springframework.http.CacheControl;
 import com.example.swings.dto.PostDTO;
 import com.example.swings.entity.Post;
 import com.example.swings.service.PostService;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @RestController
@@ -44,9 +46,14 @@ public class PostController {
         return ResponseEntity.ok(postPage);
     }
 
-    @PutMapping("/api/posts/views") // GET 요청을 처리하는 엔드포인트 추가
-    public void addViews(PostDTO postDTO) {
-        postService.increaseViews(postDTO);
+    @PutMapping("/api/posts/views")
+    public ResponseEntity<String> addViews(@RequestParam Long id) {
+        boolean success = postService.increaseViews(id);
+        if (success) {
+            return ResponseEntity.ok("Views increased successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Post not found with id: " + id);
+        }
     }
 
     @GetMapping("/api/posts/{team}")
@@ -55,11 +62,13 @@ public class PostController {
         return ResponseEntity.ok(filteredPosts);
     }
 
-    @GetMapping("/postpage/{id}") // 여기서 postId가 아니라 id로 변경
-    public ResponseEntity<PostDTO> getPostById(@PathVariable Long id) { // 여기서도 postId가 아니라 id로 변경
+    @GetMapping("/postpage/{id}")
+    public ResponseEntity<PostDTO> getPostById(@PathVariable Long id) {
         try {
-            PostDTO post = postService.getPostById(id); // 여기서도 postId가 아니라 id로 변경
-            return ResponseEntity.ok(post);
+            PostDTO post = postService.getPostById(id);
+            // Cache-Control 헤더 설정
+            CacheControl cacheControl = CacheControl.maxAge(0, TimeUnit.SECONDS).noCache().mustRevalidate();
+            return ResponseEntity.ok().cacheControl(cacheControl).body(post);
         } catch (NoSuchElementException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {

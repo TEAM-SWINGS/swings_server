@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service //스프링이 관리해주는 객체 == 스프링 빈
@@ -35,11 +36,12 @@ public class PostService {
     public void savePost(PostDTO postDTO) {
         Post post = Post.toPost(postDTO);
         post.setViews(0);
-        post.setCreatedate(LocalDateTime.now());
+        post.setCreatedate(postDTO.getCreatedate()); // 요청에서 받은 createdate 설정
         User user = userRepository.findByEmail(postDTO.getEmail()).orElseThrow();
         post.setUser(user);
         postRepository.save(post);
     }
+
 
     public PostDTO getPostById(Long id) { // 여기서도 postId가 아니라 id로 변경
         Post post = postRepository.findById(id) // 여기서도 postId가 아니라 id로 변경
@@ -62,10 +64,15 @@ public class PostService {
                 .collect(Collectors.toList());
         return new PageImpl<>(postDTOList, pageable, postPage.getTotalElements());
     }
-    public void increaseViews(PostDTO postDTO) {
-        Post post = postRepository.findById(postDTO.getId()).orElseThrow();
-        int views = post.getViews() + 1;
-        post.setViews(views);
-        postRepository.save(post);
+    public boolean increaseViews(Long postId) {
+        Optional<Post> postOptional = postRepository.findById(postId);
+        if (postOptional.isPresent()) {
+            Post post = postOptional.get();
+            post.setViews(post.getViews() + 1);
+            postRepository.save(post);
+            return true;
+        } else {
+            return false;
+        }
     }
 }

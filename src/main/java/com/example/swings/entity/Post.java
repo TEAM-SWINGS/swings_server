@@ -5,6 +5,7 @@ import com.example.swings.dto.UserDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -36,6 +37,7 @@ public class Post {
     @Column(name = "views")
     private Integer views;
 
+    @CreationTimestamp
     @Column(name = "createdate")
     private LocalDateTime createdate;
 
@@ -46,7 +48,7 @@ public class Post {
         post.setTitle(postDTO.getTitle());
         post.setContent(postDTO.getContent());
         post.setViews(postDTO.getViews());
-        post.setCreatedate(postDTO.getCreatedate());
+        //post.setCreatedate(postDTO.getCreatedate());
         return post;
     }
 }

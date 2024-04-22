@@ -39,15 +39,15 @@ public class UserService {
 //        }
 //    }
 
-    public boolean authenticate(UserDTO userDTO) {
+    public User authenticate(UserDTO userDTO) {
         User user = userRepository.findByEmail(userDTO.getEmail())
                 .orElse(null);
         if (user != null) {
             // 이메일에 해당하는 사용자가 존재하는 경우
-            return user.getPassword().equals(userDTO.getPassword());
+            return user.getPassword().equals(userDTO.getPassword()) ? user : null;
         } else {
             // 이메일에 해당하는 사용자가 존재하지 않는 경우
-            return false;
+            return null;
         }
     }
 }

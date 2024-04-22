@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 public class PostDTO {
 //    private User user;
     private Long id;
+    private Long userId;
     private String nickname;
     private String email;
     private String teamfield; // 데이터베이스 컬럼명에 맞게 수정
@@ -32,6 +33,7 @@ public class PostDTO {
         postDTO.setId(post.getId());
         // User가 null인 경우에 대비하여 null 체크를 추가합니다.
         if (post.getUser() != null) {
+            postDTO.setUserId(post.getUser().getId());
             postDTO.setNickname(post.getUser().getNickname());
             postDTO.setEmail(post.getUser().getEmail());
         }

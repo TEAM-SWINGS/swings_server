@@ -18,7 +18,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findAllByOrderByCreatedateDesc(Pageable pageable);
 
     //Optional<User> findByEmail(String email);
-    @Query("SELECT p FROM Post p WHERE p.teamfield = :teamfield")
-    Page<Post> findByTeamfield(@Param("teamfield") String teamfield, Pageable pageable);
+    @Query("SELECT p FROM Post p WHERE p.teamfield LIKE %:team% ORDER BY p.createdate DESC")
+    Page<Post> findByTeamfieldContainingOrderByCreatedateDesc(@Param("team") String team, Pageable pageable);
 
 }

@@ -50,4 +50,17 @@ public class UserService {
             return null;
         }
     }
+
+    public boolean isPasswordCorrect(Long userId, String password) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found."));
+        return user.getPassword().equals(password);
+    }
+
+    public void changePassword(Long userId, String newPassword) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found."));
+        user.setPassword(newPassword);
+        userRepository.save(user);
+    }
 }

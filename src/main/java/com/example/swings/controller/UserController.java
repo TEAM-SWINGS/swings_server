@@ -1,6 +1,8 @@
 package com.example.swings.controller;
 
 
+import com.example.swings.dto.ChangePasswordRequest;
+import com.example.swings.dto.PostDTO;
 import com.example.swings.dto.UserDTO;
 import com.example.swings.entity.User;
 import com.example.swings.service.UserService;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -62,6 +65,16 @@ public class UserController {
 
             return new ResponseEntity<>(response, headers, HttpStatus.UNAUTHORIZED);
         }
+    }
+
+    @PutMapping("/user/password")
+    public ResponseEntity<String> changePassword(@RequestBody ChangePasswordRequest request) {
+        if (!userService.isPasswordCorrect(Long.valueOf(request.getUserId()), request.getCurrentPassword())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Current password is incorrect.");
+        }
+
+        userService.changePassword(Long.valueOf(request.getUserId()), request.getNewPassword());
+        return ResponseEntity.ok("Password changed successfully.");
     }
 
 

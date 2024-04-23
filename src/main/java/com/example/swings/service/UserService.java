@@ -4,6 +4,7 @@ import com.example.swings.dto.UserDTO;
 import com.example.swings.entity.User;
 import com.example.swings.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service //스프링이 관리해주는 객체 == 스프링 빈
@@ -62,5 +63,15 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found."));
         user.setPassword(newPassword);
         userRepository.save(user);
+    }
+
+    public boolean isEmailExists(String email) {
+        // 이메일이 이미 존재하는지 여부를 확인하는 로직을 작성합니다.
+        return userRepository.existsByEmail(email);
+    }
+
+    public boolean isNicknameExists(String nickname) {
+        // 닉네임이 이미 존재하는지 여부를 확인하는 로직을 작성합니다.
+        return userRepository.existsByNickname(nickname);
     }
 }

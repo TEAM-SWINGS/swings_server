@@ -2,7 +2,6 @@ package com.example.swings.controller;
 
 
 import com.example.swings.dto.ChangePasswordRequest;
-import com.example.swings.dto.PostDTO;
 import com.example.swings.dto.UserDTO;
 import com.example.swings.entity.User;
 import com.example.swings.service.UserService;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,18 +25,24 @@ public class UserController {
     // 생성자 주입
     private final UserService userService;
     @PostMapping("/user/save")
-    public ResponseEntity<Void> save(@ModelAttribute UserDTO userDTO) {
-        System.out.println("userController.save");
-        System.out.println("userDTO = " + userDTO);
+    public ResponseEntity<String> save(@ModelAttribute UserDTO userDTO) {
+        // 이메일 또는 닉네임이 이미 존재하는지 확인
+        if (userService.isEmailExists(userDTO.getEmail())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이미 존재하는 이메일 입니다.");
+        }
+        if (userService.isNicknameExists(userDTO.getNickname())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이미 존재하는 닉네임 입니다.");
+        }
+
+        // 중복이 없으면 회원가입 진행
         userService.save(userDTO);
 
-        // 리다이렉션을 위한 응답을 생성하고, 리다이렉션할 URL을 Location 헤더에 설정
         HttpHeaders headers = new HttpHeaders();
-//        headers.setLocation(URI.create("http://192.168.240.41:3000/login"));
+        headers.setLocation(URI.create("http://192.168.240.41:3000/login"));
 
-        // HTTP 상태 코드 302(Found)를 사용하여 리다이렉션을 수행
         return new ResponseEntity<>(headers, HttpStatus.FOUND);
     }
+
 
     @ResponseBody
     @PostMapping("/user/login")

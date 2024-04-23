@@ -6,11 +6,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-
-//import javax.persistence.*;
 
 @Entity
 @Getter
@@ -19,36 +16,35 @@ import java.time.LocalDateTime;
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id; // 게시물 ID
 
     @ManyToOne
     @JoinColumn(name = "userid")
-    private User user;
+    private User user; // 사용자
 
-    @Column(name = "teamfield") // 데이터베이스 컬럼명에 맞게 수정
+    @Column(name = "teamfield") // 팀 명
     private String teamfield;
 
-    @Column(name = "title") // 데이터베이스 컬럼명에 맞게 수정
+    @Column(name = "title") // 제목
     private String title;
 
-    @Column(name = "content") // 데이터베이스 컬럼명에 맞게 수정
+    @Column(name = "content") // 내용
     private String content;
 
-    @Column(name = "views")
+    @Column(name = "views") // 조회수
     private Integer views;
 
     @CreationTimestamp
-    @Column(name = "createdate")
+    @Column(name = "createdate") // 게시글 생성일
     private LocalDateTime createdate;
 
+    // PostDTO로부터 Post 엔티티 생성
     public static Post toPost(PostDTO postDTO) {
         Post post = new Post();
-//        post.setUser(postDTO.getUser());
         post.setTeamfield(postDTO.getTeamfield());
         post.setTitle(postDTO.getTitle());
         post.setContent(postDTO.getContent());
         post.setViews(postDTO.getViews());
-        //post.setCreatedate(postDTO.getCreatedate());
         return post;
     }
 }

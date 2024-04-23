@@ -11,10 +11,11 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDTO {
-    private String email; // 데이터베이스 컬럼명에 맞게 수정
-    private String password; // 데이터베이스 컬럼명에 맞게 수정
-    private String nickname; // 데이터베이스 컬럼명에 맞게 수정
+    private String email; // 이메일
+    private String password; // 비밀번호
+    private String nickname; // 닉네임
 
+    // User 엔티티로부터 UserDTO 생성
     public static UserDTO fromUser(User user) {
         UserDTO userDTO = new UserDTO();
         userDTO.setEmail(user.getEmail());
@@ -23,13 +24,4 @@ public class UserDTO {
         return userDTO;
     }
 
-//    public static UserDTO toUserDTO(User user){
-//        UserDTO userDTO = new UserDTO();
-//        //userDTO.setId(user.getId());
-//        userDTO.setUserEmail(user.getUserEmail());
-//        userDTO.setUserName(user.getUserName());
-//        userDTO.setUserPwd(user.getUserPwd());
-//
-//        return userDTO;
-//    }
 }

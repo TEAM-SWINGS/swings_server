@@ -10,20 +10,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-
 import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
 
 @RestController
 public class PostController {
-
     private final PostService postService;
-
     public PostController(PostService postService) {
         this.postService = postService;
     }
 
+    // 게시글 생성
     @PostMapping("/api/posts/create")
     public ResponseEntity<String> createPost(@RequestBody PostDTO postDTO) {
         try {
@@ -48,22 +45,7 @@ public class PostController {
         }
     }
 
-//    @DeleteMapping("/api/posts/{id}")
-//    public ResponseEntity<String> deletePost(@PathVariable Long id) {
-//        try {
-//            // 게시글 작성자의 ID를 얻어온다.
-////            Long postOwnerId = postService.getPostOwnerId(id);
-//            postService.deletePost(id);
-//
-//            // 현재 로그인한 사용자와 게시글 작성자를 비교하여 권한 확인
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You are not authorized to delete this post.");
-//        } catch (NoSuchElementException e) {
-//            return ResponseEntity.notFound().build();
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-//        }
-//    }
-
+    // 게시글 삭제
     @DeleteMapping("/api/posts/{id}")
     public ResponseEntity<String> deletePost(@PathVariable Long id) {
         try {
@@ -76,17 +58,7 @@ public class PostController {
         }
     }
 
-
-
-//    @GetMapping("/api/posts")
-//    public ResponseEntity<Page<PostDTO>> getAllPosts(@RequestParam(defaultValue = "0") int page,
-//                                                     @RequestParam(defaultValue = "10") int size) {
-//        Pageable pageable = PageRequest.of(page, size);
-//        Page<PostDTO> postPage = postService.getAllPosts(pageable);
-//
-//        return ResponseEntity.ok(postPage);
-//    }
-
+    // 게시글 목록 조회
     @GetMapping("/api/posts")
     public ResponseEntity<Page<PostDTO>> getPosts(@RequestParam(required = false) String team,
                                                   @RequestParam(required = false) String sort,
@@ -112,10 +84,7 @@ public class PostController {
         return ResponseEntity.ok(postsPage);
     }
 
-
-
-
-
+    // 게시글 조회수 증가
     @PutMapping("/api/posts/views")
     public ResponseEntity<String> addViews(@RequestParam Long id) {
         boolean success = postService.increaseViews(id);
@@ -126,12 +95,7 @@ public class PostController {
         }
     }
 
-//    @GetMapping("/api/posts/{team}")
-//    public ResponseEntity<List<PostDTO>> getPostsByTeam(@PathVariable String team) {
-//        List<PostDTO> filteredPosts = postService.getPostsByTeam(team);
-//        return ResponseEntity.ok(filteredPosts);
-//    }
-
+    // 게시글 상세 조회
     @GetMapping("/postpage/{id}")
     public ResponseEntity<PostDTO> getPostById(@PathVariable Long id) {
         try {

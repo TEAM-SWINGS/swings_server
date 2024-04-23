@@ -1,6 +1,5 @@
 package com.example.swings.controller;
 
-
 import com.example.swings.dto.ChangePasswordRequest;
 import com.example.swings.dto.UserDTO;
 import com.example.swings.entity.User;
@@ -12,11 +11,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
-
 
 @Controller
 @RequiredArgsConstructor //MemberService에 대한 멤버를 사용 가능
@@ -24,6 +21,8 @@ public class UserController {
 
     // 생성자 주입
     private final UserService userService;
+
+    // 사용자 정보를 저장
     @PostMapping("/user/save")
     public ResponseEntity<String> save(@ModelAttribute UserDTO userDTO) {
         // 이메일 또는 닉네임이 이미 존재하는지 확인
@@ -36,14 +35,12 @@ public class UserController {
 
         // 중복이 없으면 회원가입 진행
         userService.save(userDTO);
-
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(URI.create("http://192.168.240.41:3000/login"));
-
         return new ResponseEntity<>(headers, HttpStatus.FOUND);
     }
 
-
+    // 사용자 로그인 처리
     @ResponseBody
     @PostMapping("/user/login")
     public ResponseEntity<Map<String, Object>> login(@RequestBody UserDTO userDTO) {
@@ -71,16 +68,15 @@ public class UserController {
         }
     }
 
+    // 사용자 비밀번호를 변경하는 엔드포인트
     @PutMapping("/user/password")
     public ResponseEntity<String> changePassword(@RequestBody ChangePasswordRequest request) {
         if (!userService.isPasswordCorrect(Long.valueOf(request.getUserId()), request.getCurrentPassword())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Current password is incorrect.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("현재 비밀번호가 올바르지 않습니다.");
         }
 
         userService.changePassword(Long.valueOf(request.getUserId()), request.getNewPassword());
-        return ResponseEntity.ok("Password changed successfully.");
+        return ResponseEntity.ok("비밀번호가 성공적으로 변경되었습니다.");
     }
-
-
 
 }

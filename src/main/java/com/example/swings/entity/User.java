@@ -5,8 +5,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-//import javax.persistence.*;
-
 @Entity
 @Getter
 @Setter
@@ -14,17 +12,18 @@ import lombok.Setter;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id; // 사용자 id
 
-    @Column(unique = true, name = "email") // 데이터베이스 컬럼명에 맞게 수정
-    private String email;
+    @Column(unique = true, name = "email")
+    private String email; // 이메일
 
-    @Column(name = "password") // 데이터베이스 컬럼명에 맞게 수정
-    private String password;
+    @Column(name = "password")
+    private String password; // 비밀번호
 
-    @Column(unique = true, name = "nickname") // 데이터베이스 컬럼명에 맞게 수정
-    private String nickname;
+    @Column(unique = true, name = "nickname")
+    private String nickname; // 닉네임
 
+    // UserDTO로부터 User 엔티티 생성
     public static User toUser(UserDTO userDTO) {
         User user = new User();
         user.setEmail(userDTO.getEmail());

@@ -14,7 +14,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -23,8 +22,8 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Service //스프링이 관리해주는 객체 == 스프링 빈
-@RequiredArgsConstructor //controller와 같이. final 멤버변수 생성자 만드는 역할
+@Service
+@RequiredArgsConstructor
 public class PostService {
 
     @Autowired
@@ -33,21 +32,24 @@ public class PostService {
     @Autowired
     private final UserRepository userRepository;
 
+    // 게시물을 저장
     public void savePost(PostDTO postDTO) {
         Post post = Post.toPost(postDTO);
         post.setViews(0);
-        post.setCreatedate(postDTO.getCreatedate()); // 요청에서 받은 createdate 설정
+        post.setCreatedate(postDTO.getCreatedate());
         User user = userRepository.findByEmail(postDTO.getEmail()).orElseThrow();
         post.setUser(user);
         postRepository.save(post);
     }
 
-    public PostDTO getPostById(Long id) { // 여기서도 postId가 아니라 id로 변경
-        Post post = postRepository.findById(id) // 여기서도 postId가 아니라 id로 변경
-                .orElseThrow(() -> new NoSuchElementException("Post not found with id: " + id)); // 여기서도 postId가 아니라 id로 변경
+    // ID를 기준으로 게시물을 조회
+    public PostDTO getPostById(Long id) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Post not found with id: " + id));
         return PostDTO.fromPost(post);
     }
 
+    // 팀 이름을 기준으로 게시물을 페이지별로 조회
     public Page<PostDTO> getPostsByTeam(String team, Pageable pageable) {
         Page<Post> postPage = postRepository.findByTeamfieldContainingOrderByCreatedateDesc(team, pageable);
         List<PostDTO> postDTOList = postPage.getContent().stream()
@@ -56,6 +58,7 @@ public class PostService {
         return new PageImpl<>(postDTOList, pageable, postPage.getTotalElements());
     }
 
+    // 모든 게시물을 페이지별로 조회
     public Page<PostDTO> getAllPosts(Pageable pageable) {
         Page<Post> postPage = postRepository.findAllByOrderByCreatedateDesc(pageable);
         List<PostDTO> postDTOList = postPage.getContent().stream()
@@ -64,6 +67,7 @@ public class PostService {
         return new PageImpl<>(postDTOList, pageable, postPage.getTotalElements());
     }
 
+    // 게시물 조회수를 증가
     public boolean increaseViews(Long postId) {
         Optional<Post> postOptional = postRepository.findById(postId);
         if (postOptional.isPresent()) {
@@ -76,6 +80,7 @@ public class PostService {
         }
     }
 
+    // 게시물을 수정
     @Transactional
     public void updatePost(Long id, PostDTO postDTO) {
         Post post = postRepository.findById(id)
@@ -84,15 +89,12 @@ public class PostService {
         // 수정된 내용 업데이트
         post.setTitle(postDTO.getTitle());
         post.setContent(postDTO.getContent());
-        post.setTeamfield(postDTO.getTeamfield()); // TeamField 업데이트 추가
-
-        // 그 외 필요한 필드들도 업데이트
+        post.setTeamfield(postDTO.getTeamfield());
 
         postRepository.save(post);
     }
 
-
-    // 게시글 삭제 메서드
+    // 게시글을 삭제
     @Transactional
     public void deletePost(Long id) {
         Post post = postRepository.findById(id)
@@ -101,12 +103,13 @@ public class PostService {
         postRepository.delete(post);
     }
 
+    // 주어진 사용자가 해당 게시물의 소유자인지 확인
     public boolean isPostOwner(Long postId, Long userId) {
         Post post = postRepository.findById(postId).orElseThrow();
         return post.getUser().getId().equals(userId);
     }
 
-    // 게시글을 작성한 사용자의 ID를 가져오는 메서드
+    // 게시글을 작성한 사용자의 ID를 가져오기
     public Long getPostOwnerId(Long postId) {
         Optional<Post> postOptional = postRepository.findById(postId);
         return postOptional.map(post -> post.getUser().getId())

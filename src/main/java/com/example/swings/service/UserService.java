@@ -7,39 +7,19 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-@Service //스프링이 관리해주는 객체 == 스프링 빈
-@RequiredArgsConstructor //controller와 같이. final 멤버변수 생성자 만드는 역할
+@Service
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository; // 먼저 jpa, mysql dependency 추가
 
+    // 사용자 정보를 저장
     public void save(UserDTO userDTO) {
-        // repsitory의 save 메서드 호출
         User user = User.toUser(userDTO);
         userRepository.save(user);
-        //Repository의 save메서드 호출 (조건. entity객체를 넘겨줘야 함)
-
     }
 
-//    public MemberDTO login(UserDTO userDTO){ //entity객체는 service에서만
-//        Optional<MemberEntity> byUserEmail = memberRepository.findByUserEmail(memberDTO.getUserEmail());
-//        if(byUserEmail.isPresent()){
-//            // 조회 결과가 있다
-//            MemberEntity memberEntity = byUserEmail.get(); // Optional에서 꺼냄
-//            if(memberEntity.getUserPwd().equals(memberDTO.getUserPwd())) {
-//                //비밀번호 일치
-//                //entity -> dto 변환 후 리턴
-//                return MemberDTO.fromMemberEntity(memberEntity);
-//            } else {
-//                //비밀번호 불일치
-//                return null;
-//            }
-//        } else {
-//            // 조회 결과가 없다
-//            return null;
-//        }
-//    }
-
+    // 사용자 인증을 수행
     public User authenticate(UserDTO userDTO) {
         User user = userRepository.findByEmail(userDTO.getEmail())
                 .orElse(null);
@@ -52,26 +32,30 @@ public class UserService {
         }
     }
 
+    // 사용자 비밀번호가 올바른지 확인
     public boolean isPasswordCorrect(Long userId, String password) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found."));
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
         return user.getPassword().equals(password);
     }
 
+    // 사용자 비밀번호를 변경
     public void changePassword(Long userId, String newPassword) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found."));
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
         user.setPassword(newPassword);
         userRepository.save(user);
     }
 
+    // 주어진 이메일이 이미 존재하는지 확인
     public boolean isEmailExists(String email) {
-        // 이메일이 이미 존재하는지 여부를 확인하는 로직을 작성합니다.
+        // 이메일이 이미 존재하는지 여부를 확인
         return userRepository.existsByEmail(email);
     }
 
+    // 주어진 닉네임이 이미 존재하는지 확인
     public boolean isNicknameExists(String nickname) {
-        // 닉네임이 이미 존재하는지 여부를 확인하는 로직을 작성합니다.
+        // 닉네임이 이미 존재하는지 여부를 확인
         return userRepository.existsByNickname(nickname);
     }
 }

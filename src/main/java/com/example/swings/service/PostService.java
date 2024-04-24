@@ -58,6 +58,24 @@ public class PostService {
         return new PageImpl<>(postDTOList, pageable, postPage.getTotalElements());
     }
 
+    // 조회수를 기준으로 내림차순으로 게시물을 페이지별로 조회
+    public Page<PostDTO> getPostsByViews(Pageable pageable) {
+        Page<Post> postPage = postRepository.findAllByOrderByViewsDesc(pageable);
+        List<PostDTO> postDTOList = postPage.getContent().stream()
+                .map(PostDTO::fromPost)
+                .collect(Collectors.toList());
+        return new PageImpl<>(postDTOList, pageable, postPage.getTotalElements());
+    }
+
+    // 특정 팀에 속하는 게시글을 조회하면서 조회순으로 정렬된 페이지를 반환
+    public Page<PostDTO> getPostsByTeamAndSortByViews(String team, Pageable pageable) {
+        Page<Post> postPage = postRepository.findByTeamfieldContainingOrderByViewsDesc(team, pageable);
+        List<PostDTO> postDTOList = postPage.getContent().stream()
+                .map(PostDTO::fromPost)
+                .collect(Collectors.toList());
+        return new PageImpl<>(postDTOList, pageable, postPage.getTotalElements());
+    }
+
     // 모든 게시물을 페이지별로 조회
     public Page<PostDTO> getAllPosts(Pageable pageable) {
         Page<Post> postPage = postRepository.findAllByOrderByCreatedateDesc(pageable);

@@ -13,6 +13,12 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     // 생성일자를 기준으로 내림차순으로 모든 게시물을 페이지별로 조회
     Page<Post> findAllByOrderByCreatedateDesc(Pageable pageable);
 
+    // 조회수를 기준으로 내림차순으로 모든 게시물을 페이지별로 조회
+    Page<Post> findAllByOrderByViewsDesc(Pageable pageable);
+
+    // 특정 팀에 속하는 게시글을 조회하면서 조회순으로 정렬
+    Page<Post> findByTeamfieldContainingOrderByViewsDesc(String team, Pageable pageable);
+
     // 팀 이름을 포함하고 있는 게시물을 팀 이름을 기준으로 내림차순으로 페이지별로 조회
     @Query("SELECT p FROM Post p WHERE p.teamfield LIKE %:team% ORDER BY p.createdate DESC")
     Page<Post> findByTeamfieldContainingOrderByCreatedateDesc(@Param("team") String team, Pageable pageable);

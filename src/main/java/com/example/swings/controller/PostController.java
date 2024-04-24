@@ -58,31 +58,41 @@ public class PostController {
         }
     }
 
-    // 게시글 목록 조회
     @GetMapping("/api/posts")
     public ResponseEntity<Page<PostDTO>> getPosts(@RequestParam(required = false) String team,
                                                   @RequestParam(required = false) String sort,
                                                   @RequestParam(required = false) String search,
                                                   @RequestParam(defaultValue = "0") int page,
                                                   @RequestParam(defaultValue = "10") int size) {
-        // 페이지 정보 설정
+        // 페이지와 정렬 설정
         Pageable pageable;
-        if (sort != null) {
-            pageable = PageRequest.of(page, size, Sort.by(sort));
+        if (sort != null && sort.equals("views")) {
+            pageable = PageRequest.of(page, size, Sort.by("views").descending());
+            // 특정 팀에 속하는 게시글을 조회하면서 조회순으로 정렬된 결과를 가져옵니다.
+            if (team != null) {
+                Page<PostDTO> postsPage = postService.getPostsByTeamAndSortByViews(team, pageable);
+                return ResponseEntity.ok(postsPage);
+            } else {
+                // 팀이 지정되지 않은 경우에는 전체 게시글에서 조회순으로 정렬된 결과를 가져옵니다.
+                Page<PostDTO> postsPage = postService.getAllPosts(pageable);
+                return ResponseEntity.ok(postsPage);
+            }
         } else {
-            pageable = PageRequest.of(page, size);
+            pageable = PageRequest.of(page, size, Sort.by("createdate").descending());
+            // 팀과 정렬에 따라 포스트를 가져옵니다.
+            Page<PostDTO> postsPage;
+            if (team != null) {
+                postsPage = postService.getPostsByTeam(team, pageable);
+            } else {
+                postsPage = postService.getAllPosts(pageable);
+            }
+            return ResponseEntity.ok(postsPage);
         }
-
-        // 팀이 지정되었는지에 따라 게시물 가져오기
-        Page<PostDTO> postsPage;
-        if (team != null) {
-            postsPage = postService.getPostsByTeam(team, pageable);
-        } else {
-            postsPage = postService.getAllPosts(pageable);
-        }
-
-        return ResponseEntity.ok(postsPage);
     }
+
+
+
+
 
     // 게시글 조회수 증가
     @PutMapping("/api/posts/views")

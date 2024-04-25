@@ -36,7 +36,7 @@ public class UserController {
         // 중복이 없으면 회원가입 진행
         userService.save(userDTO);
         HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(URI.create("http://192.168.240.41:3000/login"));
+        headers.setLocation(URI.create("http://localhost:3000/login"));
         return new ResponseEntity<>(headers, HttpStatus.FOUND);
     }
 
@@ -50,7 +50,7 @@ public class UserController {
             Map<String, Object> response = new HashMap<>();
             response.put("message", "로그인에 성공했습니다.");
             response.put("user", user);
-            response.put("redirectUrl", "http://192.168.240.41:3000/"); // 로그인 성공 후 리다이렉트할 URL
+            response.put("redirectUrl", "http://localhost:3000/"); // 로그인 성공 후 리다이렉트할 URL
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
